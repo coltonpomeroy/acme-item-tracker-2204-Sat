@@ -52,7 +52,8 @@ const mapDispatch = (dispatch)=> {
       dispatch({ type: 'CREATE_USER', user});
     },
     removeThingFromUser: async(thing)=> {
-      const updatedThing = (await axios.put(`/api/things/${thing.id}`)).data
+      thing = {...thing, userId: null}
+      const updatedThing = (await axios.put(`/api/things/${thing.id}`, thing)).data
       dispatch({ type: 'UPDATE_THING', thing: updatedThing});
     },
     deleteUser: async(user)=> {

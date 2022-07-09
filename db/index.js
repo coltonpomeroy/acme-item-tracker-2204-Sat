@@ -20,6 +20,11 @@ const Thing = conn.define('thing', {
 });
 
 Thing.belongsTo(User);
+Thing.addHook('beforeValidate', (thing) => {
+  if(!thing.userId){
+    thing.userId = null;
+  }
+});
 
 module.exports = {
   conn,
