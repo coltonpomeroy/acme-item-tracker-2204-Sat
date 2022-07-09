@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 
 
-const Users = ({ users, createUser, deleteUser, things })=> {
+const Users = ({ users, createUser, deleteUser, things, removeThingFromUser })=> {
   return (
     <div>
       <h1>Users</h1>
@@ -22,6 +22,7 @@ const Users = ({ users, createUser, deleteUser, things })=> {
                       return (
                         <li key={ thing.id }>
                           { thing.name } ({ thing.ranking })
+                          <button onClick={ ()=> removeThingFromUser(thing)}>x</button>
                         </li>
                       );
                     }) 
@@ -46,14 +47,18 @@ const mapStateToProps = (state)=> {
 
 const mapDispatch = (dispatch)=> {
   return {
+    createUser: async()=> {
+      const user = (await axios.post('/api/users', {name: Math.random()})).data;
+      dispatch({ type: 'CREATE_USER', user});
+    },
+    removeThingFromUser: async(thing)=> {
+      const updatedThing = (await axios.put(`/api/things/${thing.id}`)).data
+      dispatch({ type: 'UPDATE_THING', thing: updatedThing});
+    },
     deleteUser: async(user)=> {
       await axios.delete(`/api/users/${user.id}`);
       dispatch({ type: 'DELETE_USER', user});
     },
-    createUser: async()=> {
-      const user = (await axios.post('/api/users', {name: Math.random()})).data;
-      dispatch({ type: 'CREATE_USER', user});
-    }
   };
 }
 export default connect(mapStateToProps, mapDispatch)(Users);
